@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VHS — Compagnon V8.1 Mobile</title>
+<style>
+:root{
+  --bg:#050403;
+  --panel:#16110f;
+  --panel2:#0c0908;
+  --bone:#eadbc4;
+  --gold:#c8aa72;
+  --muted:#9d8663;
+  --red:#8f2724;
+  --red2:#e1544b;
+  --line:rgba(234,219,196,.34);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:#050403;
+  color:var(--bone);
+  font-family:Georgia,"Times New Roman",serif;
+}
+body{
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 50% 8%,rgba(143,39,36,.18),transparent 28%),
+    radial-gradient(circle at 50% 80%,rgba(200,170,114,.08),transparent 28%),
+    linear-gradient(180deg,#080706,#020202);
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.18;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 5px),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+button,input{font:inherit}
+button{border:0;background:none;color:inherit;touch-action:manipulation}
+.app{
+  min-height:100vh;
+  min-height:100dvh;
+  padding:calc(10px + env(safe-area-inset-top)) 10px calc(14px + env(safe-area-inset-bottom));
+  position:relative;
+  z-index:1;
+}
+.shell{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.logo{
+  font-size:42px;
+  line-height:.9;
+  font-weight:900;
+  letter-spacing:2px;
+  text-shadow:0 3px 0 #000;
+}
+.version{
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.btn{
+  min-height:40px;
+  padding:9px 11px;
+  border-radius:999px;
+  border:1px solid rgba(234,219,196,.28);
+  background:linear-gradient(180deg,rgba(32,25,20,.95),rgba(8,6,5,.95));
+  color:var(--bone);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:12px;
+  font-weight:850;
+  box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.btn.active{
+  border-color:rgba(143,39,36,.8);
+  color:#ffd8d2;
+}
+.btn:active,.round:active,.token:active,.shield:active{transform:scale(.96)}
+
+.board{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.ritual{
+  border:1px solid rgba(234,219,196,.28);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at center,rgba(234,219,196,.08),transparent 35%),
+    linear-gradient(180deg,rgba(22,17,14,.98),rgba(6,5,4,.98));
+  box-shadow:inset 0 0 0 6px rgba(0,0,0,.24),0 18px 44px rgba(0,0,0,.38);
+  padding:13px;
+  position:relative;
+  overflow:hidden;
+}
+.ritual:before,.card:before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border:1px dotted rgba(234,219,196,.30);
+  border-radius:16px;
+  pointer-events:none;
+}
+.ritual-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.ritual-title{
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:2.5px;
+  font-weight:900;
+  font-size:29px;
+  line-height:1;
+  text-shadow:0 3px 0 #000;
+}
+.big-emoji{
+  font-size:36px;
+  filter:sepia(.3);
+}
+.ritual-main{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+}
+.hpblock{
+  text-align:center;
+}
+.hpnum{
+  font-size:76px;
+  line-height:.85;
+  font-weight:900;
+  text-shadow:0 5px 0 #000;
+}
+.hpmax{
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:13px;
+  color:var(--muted);
+}
+.round{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:1px solid rgba(234,219,196,.38);
+  background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.08),transparent 28%),linear-gradient(180deg,#221a15,#060504);
+  color:var(--bone);
+  display:grid;
+  place-items:center;
+  font-size:34px;
+  line-height:1;
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.45),0 9px 18px rgba(0,0,0,.30);
+  user-select:none;
+}
+.label{
+  margin:13px 0 7px;
+  text-align:center;
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:1.4px;
+  font-size:17px;
+}
+.tokens,.shields{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.token{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:2px solid rgba(234,219,196,.5);
+  background:#080706;
+  box-shadow:inset 0 0 10px rgba(0,0,0,.85);
+}
+.token.on{background:linear-gradient(145deg,#eadbc4,#83663f);box-shadow:0 0 16px rgba(200,170,114,.25)}
+.shield{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  border:1px solid rgba(234,219,196,.38);
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  background:#080706;
+  opacity:.45;
+}
+.shield.on{opacity:1;background:linear-gradient(180deg,rgba(234,219,196,.18),rgba(0,0,0,.2))}
+.players{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.card{
+  position:relative;
+  min-height:164px;
+  border:1px solid rgba(234,219,196,.28);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(234,219,196,.05),transparent 24%),
+    linear-gradient(180deg,rgba(22,17,14,.98),rgba(6,5,4,.98));
+  box-shadow:inset 0 0 0 6px rgba(0,0,0,.24),0 13px 30px rgba(0,0,0,.32);
+  overflow:hidden;
+  padding:12px;
+}
+.card.killer{border-color:rgba(143,39,36,.52)}
+.card.dead{filter:grayscale(.5);border-color:rgba(225,84,75,.55)}
+.card.critical .player-hp{color:#ff6b62;animation:pulse 1s infinite}
+.card.critical .bar-fill{background:linear-gradient(90deg,#641512,#e1544b)}
+.player-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  position:relative;
+  z-index:2;
+}
+.role{
+  font-size:31px;
+  line-height:1;
+}
+.player-name{
+  flex:1;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  font-size:19px;
+  line-height:1;
+  font-weight:900;
+  text-shadow:0 2px 0 #000;
+}
+.player-name[contenteditable="true"]:focus{
+  outline:1px dashed rgba(234,219,196,.4);
+  border-radius:7px;
+}
+.player-hp{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  margin-top:10px;
+}
+.player-hp .num{
+  font-size:58px;
+  line-height:.85;
+  font-weight:900;
+  text-shadow:0 4px 0 #000;
+}
+.player-hp .max{
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  color:var(--muted);
+  font-size:13px;
+}
+.card-controls{
+  position:relative;
+  z-index:2;
+  margin-top:9px;
+  display:flex;
+  justify-content:center;
+  gap:18px;
+}
+.card-controls .round{
+  width:46px;
+  height:46px;
+  font-size:30px;
+}
+.bar{
+  position:relative;
+  z-index:2;
+  height:10px;
+  border-radius:999px;
+  border:1px solid rgba(234,219,196,.22);
+  overflow:hidden;
+  background:#050403;
+  margin-top:10px;
+}
+.bar-fill{
+  height:100%;
+  width:70%;
+  background:linear-gradient(90deg,#8f754d,var(--bone));
+  transition:width .18s ease;
+}
+.dead-badge{
+  display:none;
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:3;
+  border:1px solid rgba(225,84,75,.75);
+  border-radius:999px;
+  background:rgba(55,7,6,.72);
+  color:#ffd7d2;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+  padding:5px 12px;
+}
+.card.dead .dead-badge{display:block}
+.float{
+  position:absolute;
+  right:18px;
+  top:52%;
+  z-index:10;
+  color:#ff6b62;
+  font-size:36px;
+  font-weight:900;
+  text-shadow:0 0 18px rgba(225,84,75,.85);
+  animation:float .75s ease both;
+  pointer-events:none;
+}
+.hit{animation:hit .28s ease}
+.tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.history{
+  margin-top:10px;
+  border:1px solid rgba(234,219,196,.14);
+  border-radius:16px;
+  background:rgba(0,0,0,.28);
+  color:rgba(234,219,196,.75);
+  padding:8px 10px;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:12px;
+  text-align:center;
+  line-height:1.35;
+  max-height:74px;
+  overflow:auto;
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  background:rgba(0,0,0,.86);
+  backdrop-filter:blur(5px);
+  display:none;
+  place-items:center;
+  padding:18px;
+}
+.overlay.show{display:grid}
+.victory{
+  width:min(520px,100%);
+  border:1px solid rgba(234,219,196,.35);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 10%,rgba(143,39,36,.26),transparent 35%),
+    linear-gradient(180deg,#17110e,#060504);
+  box-shadow:0 30px 80px rgba(0,0,0,.68),inset 0 0 0 7px rgba(0,0,0,.28);
+  padding:34px 24px;
+  text-align:center;
+  position:relative;
+}
+.victory:before{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border:1px dotted rgba(234,219,196,.3);
+  border-radius:18px;
+}
+.victory h2{
+  position:relative;
+  margin:18px 0 10px;
+  font-size:42px;
+  line-height:.95;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+.victory p{
+  position:relative;
+  margin:0 0 22px;
+  color:var(--muted);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+.victory .btn{position:relative}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.42}}
+@keyframes float{0%{transform:translateY(15px);opacity:0}20%{opacity:1}100%{transform:translateY(-32px);opacity:0}}
+@keyframes hit{0%{box-shadow:0 13px 30px rgba(0,0,0,.32)}50%{box-shadow:0 0 34px rgba(225,84,75,.55)}100%{box-shadow:0 13px 30px rgba(0,0,0,.32)}}
+
+/* Tablette / paysage : mode table propre, pas pour iPhone portrait */
+@media (min-width:900px) and (min-height:560px){
+  html,body{height:100%;overflow:hidden}
+  .app{padding:14px}
+  .shell{height:100%;max-width:none}
+  .header{position:absolute;left:24px;top:20px;right:24px;z-index:20;margin:0}
+  .board{
+    height:100%;
+    position:relative;
+    display:block;
+    border:1px solid rgba(234,219,196,.13);
+    border-radius:26px;
+    overflow:hidden;
+    box-shadow:inset 0 0 80px rgba(0,0,0,.65);
+  }
+  .ritual{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:min(43vw,510px);
+    max-width:56vh;
+    min-height:auto;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ritual:before{border-radius:50%}
+  .ritual-inner{width:82%}
+  .players{display:block}
+  .card{
+    position:absolute;
+    width:31vw;
+    max-width:430px;
+    min-height:150px;
+  }
+  .card[data-id="killer1"]{left:50%;top:7%;transform:translateX(-50%) rotate(180deg)}
+  .card[data-id="killer2"]{left:50%;bottom:7%;transform:translateX(-50%)}
+  .card[data-id="survivor1"]{left:4.5%;top:50%;transform:translateY(-50%) rotate(90deg);width:32vw}
+  .card[data-id="survivor2"]{right:4.5%;top:50%;transform:translateY(-50%) rotate(-90deg);width:32vw}
+  .tools{
+    position:absolute;
+    left:22px;
+    bottom:18px;
+    width:auto;
+    display:flex;
+  }
+  .history{
+    position:absolute;
+    left:50%;
+    bottom:18px;
+    transform:translateX(-50%);
+    width:min(430px,40vw);
+    margin:0;
+  }
+}
+@media(max-width:390px){
+  .logo{font-size:36px}
+  .players{gap:8px}
+  .card{padding:10px;min-height:154px}
+  .player-name{font-size:16px}
+  .role{font-size:28px}
+  .player-hp .num{font-size:51px}
+  .round{width:48px;height:48px}
+  .card-controls .round{width:42px;height:42px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="shell">
+    <header class="header">
+      <div>
+        <div class="logo">VHS</div>
+        <div class="version">Compagnon V8.1</div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="fullscreen">Plein écran</button>
+        <button class="btn active" id="wake">Écran allumé</button>
+        <button class="btn active" id="auto">Victoire auto</button>
+      </div>
+    </header>
+
+    <main class="board">
+      <section class="ritual">
+        <div class="ritual-inner">
+          <div class="ritual-top">
+            <div class="big-emoji">🕯️</div>
+            <div class="ritual-title">Le Rituel</div>
+            <div class="big-emoji">⛧</div>
+          </div>
+          <div class="ritual-main">
+            <button class="round" data-rhp="-1">−</button>
+            <div class="hpblock">
+              <div class="hpnum" id="ritualHp">9</div>
+              <div class="hpmax">/ 9 PV</div>
+            </div>
+            <button class="round" data-rhp="1">+</button>
+          </div>
+          <div class="label">Progression <span id="progLabel">0/7</span></div>
+          <div class="tokens" id="progTokens"></div>
+          <div class="label">Boucliers</div>
+          <div class="shields" id="shieldTokens"></div>
+        </div>
+      </section>
+
+      <section class="players" id="players"></section>
+
+      <div class="tools">
+        <button class="btn" id="reset">Nouvelle partie</button>
+        <button class="btn" id="minusAll">Tous -1</button>
+        <button class="btn" id="save">Sauver</button>
+        <button class="btn" id="load">Charger</button>
+      </div>
+
+      <div class="history" id="history">Historique vide.</div>
+    </main>
+  </div>
+</div>
+
+<div class="overlay" id="victory">
+  <div class="victory">
+    <h2 id="victoryTitle">Victoire</h2>
+    <p id="victoryText"></p>
+    <button class="btn" id="victoryReset">Nouvelle partie</button>
+  </div>
+</div>
+
+<script>
+const START = {
+  killer1:{label:"Tueur 1", role:"killer", icon:"👻", hp:14, max:20},
+  killer2:{label:"Tueur 2", role:"killer", icon:"💀", hp:14, max:20},
+  survivor1:{label:"Survivant 1", role:"survivor", icon:"🩹", hp:14, max:20},
+  survivor2:{label:"Survivant 2", role:"survivor", icon:"✋", hp:14, max:20},
+  ritual:{hp:9,max:9,prog:0,shield:0}
+};
+let state = JSON.parse(JSON.stringify(START));
+let history = [];
+let autoWin = true;
+let wakeLock = null;
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function render(){
+  renderPlayers();
+  renderRitual();
+  renderHistory();
+  save(false);
+  checkWin();
+}
+
+function renderPlayers(){
+  const order = ["killer1","survivor1","survivor2","killer2"];
+  $("#players").innerHTML = order.map(id=>{
+    const p = state[id];
+    const pct = Math.max(0, Math.min(100, p.hp / p.max * 100));
+    return `
+      <article class="card ${p.role} ${p.hp<=0?"dead":""} ${p.hp<=3&&p.hp>0?"critical":""}" data-id="${id}">
+        <div class="player-head">
+          <div class="role">${p.icon}</div>
+          <div class="player-name" contenteditable="true" spellcheck="false" data-name="${id}">${p.label}</div>
+        </div>
+        <div class="player-hp">
+          <span class="num">${p.hp}</span><span class="max"> / ${p.max}</span>
+        </div>
+        <div class="card-controls">
+          <button class="round" data-hp="${id}" data-delta="-1">−</button>
+          <button class="round" data-hp="${id}" data-delta="1">+</button>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div class="dead-badge">✝ Éliminé</div>
+      </article>
+    `;
+  }).join("");
+  bindPlayers();
+}
+
+function bindPlayers(){
+  $$("[data-hp]").forEach(btn=>{
+    btn.onclick = () => changeHp(btn.dataset.hp, Number(btn.dataset.delta));
+    let timer, interval;
+    btn.onpointerdown = () => {
+      timer = setTimeout(()=>{
+        interval = setInterval(()=>changeHp(btn.dataset.hp, Number(btn.dataset.delta)), 95);
+      }, 430);
+    };
+    const stop = () => {clearTimeout(timer); clearInterval(interval)};
+    btn.onpointerup = stop;
+    btn.onpointerleave = stop;
+    btn.onpointercancel = stop;
+  });
+  $$("[data-name]").forEach(el=>{
+    el.onkeydown = e => {
+      if(e.key === "Enter"){ e.preventDefault(); el.blur(); }
+    };
+    el.onblur = () => {
+      const id = el.dataset.name;
+      state[id].label = el.textContent.trim() || START[id].label;
+      save(false);
+    };
+  });
+}
+
+function renderRitual(){
+  $("#ritualHp").textContent = state.ritual.hp;
+  $("#progLabel").textContent = `${state.ritual.prog}/7`;
+
+  $("#progTokens").innerHTML = "";
+  for(let i=1;i<=7;i++){
+    const b = document.createElement("button");
+    b.className = "token" + (i <= state.ritual.prog ? " on" : "");
+    b.onclick = () => {
+      state.ritual.prog = i === state.ritual.prog ? i-1 : i;
+      log(`Progression Rituel : ${state.ritual.prog}/7`);
+      render();
+    };
+    $("#progTokens").appendChild(b);
+  }
+
+  $("#shieldTokens").innerHTML = "";
+  for(let i=1;i<=3;i++){
+    const b = document.createElement("button");
+    b.className = "shield" + (i <= state.ritual.shield ? " on" : "");
+    b.textContent = "🛡️";
+    b.onclick = () => {
+      state.ritual.shield = i === state.ritual.shield ? i-1 : i;
+      log(`Boucliers Rituel : ${state.ritual.shield}/3`);
+      render();
+    };
+    $("#shieldTokens").appendChild(b);
+  }
+}
+
+function changeHp(id, delta){
+  const p = state[id];
+  const old = p.hp;
+  p.hp = Math.max(0, Math.min(p.max, p.hp + delta));
+  const real = p.hp - old;
+  if(!real) return;
+  log(`${p.label} ${real>0?"+":""}${real} PV`);
+  render();
+  flash(id, real);
+}
+
+function changeRitual(delta){
+  const old = state.ritual.hp;
+  state.ritual.hp = Math.max(0, Math.min(state.ritual.max, state.ritual.hp + delta));
+  const real = state.ritual.hp - old;
+  if(!real) return;
+  log(`Rituel ${real>0?"+":""}${real} PV`);
+  renderRitual();
+  renderHistory();
+  save(false);
+  checkWin();
+}
+
+function flash(id, real){
+  const card = document.querySelector(`[data-id="${id}"]`);
+  if(!card) return;
+  card.classList.add("hit");
+  setTimeout(()=>card.classList.remove("hit"), 300);
+  const f = document.createElement("div");
+  f.className = "float";
+  f.textContent = real > 0 ? `+${real}` : `${real}`;
+  f.style.color = real > 0 ? "#eadbc4" : "#ff6b62";
+  card.appendChild(f);
+  setTimeout(()=>f.remove(), 780);
+}
+
+function log(txt){
+  const t = new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  history.unshift(`${t} — ${txt}`);
+  history = history.slice(0,8);
+}
+
+function renderHistory(){
+  $("#history").innerHTML = history.length ? history.join("<br>") : "Historique vide.";
+}
+
+function checkWin(){
+  if(!autoWin) return;
+  let title="", text="";
+  if(state.killer1.hp<=0 && state.killer2.hp<=0){
+    title="Victoire des Survivants"; text="Les deux Tueurs sont éliminés.";
+  } else if(state.ritual.prog>=7){
+    title="Victoire des Survivants"; text="Le Rituel est accompli.";
+  } else if(state.survivor1.hp<=0 && state.survivor2.hp<=0){
+    title="Victoire des Tueurs"; text="Tous les Survivants sont morts.";
+  } else if(state.ritual.hp<=0){
+    title="Victoire des Tueurs"; text="Le Rituel est détruit.";
+  }
+  if(title){
+    $("#victoryTitle").textContent = title;
+    $("#victoryText").textContent = text;
+    $("#victory").classList.add("show");
+  }
+}
+
+function reset(){
+  state = JSON.parse(JSON.stringify(START));
+  history = [];
+  $("#victory").classList.remove("show");
+  log("Nouvelle partie V8.1");
+  render();
+}
+
+function save(show=true){
+  try{
+    localStorage.setItem("vhs_compagnon_mobile_v2", JSON.stringify({state,history,autoWin}));
+    if(show){log("Partie sauvegardée"); renderHistory();}
+  }catch(e){}
+}
+
+function load(){
+  try{
+    const data = JSON.parse(localStorage.getItem("vhs_compagnon_mobile_v2"));
+    if(data && data.state){
+      state = data.state;
+      history = data.history || [];
+      autoWin = data.autoWin ?? true;
+      $("#auto").classList.toggle("active", autoWin);
+      $("#victory").classList.remove("show");
+      log("Partie chargée");
+      render();
+    }
+  }catch(e){}
+}
+
+async function requestWake(){
+  if(!("wakeLock" in navigator)) return;
+  try{ wakeLock = await navigator.wakeLock.request("screen"); }catch(e){}
+}
+function releaseWake(){
+  if(wakeLock){ wakeLock.release(); wakeLock = null; }
+}
+
+$$("[data-rhp]").forEach(b=>b.onclick = () => changeRitual(Number(b.dataset.rhp)));
+$("#reset").onclick = reset;
+$("#victoryReset").onclick = reset;
+$("#save").onclick = () => save(true);
+$("#load").onclick = load;
+$("#minusAll").onclick = () => ["killer1","killer2","survivor1","survivor2"].forEach(id=>changeHp(id,-1));
+$("#auto").onclick = () => {
+  autoWin = !autoWin;
+  $("#auto").classList.toggle("active", autoWin);
+  log(`Victoire auto ${autoWin?"activée":"désactivée"}`);
+  renderHistory();
+  checkWin();
+};
+$("#wake").onclick = async () => {
+  const active = $("#wake").classList.toggle("active");
+  if(active) await requestWake(); else releaseWake();
+};
+$("#fullscreen").onclick = async () => {
+  try{
+    if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  }catch(e){}
+};
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible" && $("#wake").classList.contains("active")) requestWake();});
+requestWake();
+render();
+</script>
+</body>
+</html>
